@@ -1,0 +1,40 @@
+{% extends "admin_base.html" %}
+{% block title %}{{ 'Editar' if feature else 'Nueva' }} Característica{% endblock %}
+{% block content %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6"><h1 class="m-0">{{ 'Editar' if feature else 'Nueva' }} Característica</h1></div>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    <div class="form-group">
+                        <label for="icon">Icono (Font Awesome) *</label>
+                        <input type="text" class="form-control" id="icon" name="icon" value="{{ feature.icon if feature else '' }}" required>
+                        <small class="form-text text-muted">Ej: fa fa-check, fa fa-shipping-fast, fas fa-exchange-alt</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="title">Título *</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ feature.title if feature else '' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="order">Orden</label>
+                        <input type="number" class="form-control" id="order" name="order" value="{{ feature.order if feature else 0 }}">
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="is_active" name="is_active" {% if not feature or feature.is_active %}checked{% endif %}>
+                        <label class="form-check-label" for="is_active">Activo</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                    <a href="{{ url_for('admin_features') }}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "admin_base.html" %}
+{% block title %}{{ 'Editar' if section else 'Nueva' }} Sección de Footer{% endblock %}
+{% block content %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6"><h1 class="m-0">{{ 'Editar' if section else 'Nueva' }} Sección de Footer</h1></div>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    <div class="form-group">
+                        <label for="section_type">Tipo de Sección *</label>
+                        <select class="form-control" id="section_type" name="section_type" required>
+                            <option value="about" {% if section and section.section_type == 'about' %}selected{% endif %}>Acerca de</option>
+                            <option value="contact" {% if section and section.section_type == 'contact' %}selected{% endif %}>Contacto</option>
+                            <option value="links" {% if section and section.section_type == 'links' %}selected{% endif %}>Enlaces</option>
+                        </select>
+                        <small class="form-text text-muted">
+                            - Acerca de: Información de la empresa<br>
+                            - Contacto: Dirección, email, teléfono (usar formato HTML)<br>
+                            - Enlaces: Sección de enlaces (título solamente, los enlaces se agregan después)
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label for="title">Título</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ section.title if section else '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="content">Contenido</label>
+                        <textarea class="form-control" id="content" name="content" rows="5">{{ section.content if section else '' }}</textarea>
+                        <small class="form-text text-muted">Para contacto, usa HTML: &lt;p&gt;&lt;i class="fa fa-map-marker-alt"&gt;&lt;/i&gt; Dirección&lt;/p&gt;</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="order">Orden</label>
+                        <input type="number" class="form-control" id="order" name="order" value="{{ section.order if section else 0 }}">
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="is_active" name="is_active" {% if not section or section.is_active %}checked{% endif %}>
+                        <label class="form-check-label" for="is_active">Activo</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                    <a href="{{ url_for('admin_footer') }}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "admin_base.html" %}
+{% block title %}{{ 'Editar' if offer else 'Nuevo' }} Banner de Oferta{% endblock %}
+{% block content %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6"><h1 class="m-0">{{ 'Editar' if offer else 'Nuevo' }} Banner de Oferta</h1></div>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    <div class="form-group">
+                        <label for="title">Título *</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ offer.title if offer else '' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subtitle">Subtítulo</label>
+                        <input type="text" class="form-control" id="subtitle" name="subtitle" value="{{ offer.subtitle if offer else '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="image_url">URL de Imagen *</label>
+                        <input type="text" class="form-control" id="image_url" name="image_url" value="{{ offer.image_url if offer else '' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="button_text">Texto del Botón</label>
+                        <input type="text" class="form-control" id="button_text" name="button_text" value="{{ offer.button_text if offer else '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="button_url">URL del Botón</label>
+                        <input type="text" class="form-control" id="button_url" name="button_url" value="{{ offer.button_url if offer else '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="background_color">Color de Fondo</label>
+                        <input type="color" class="form-control" id="background_color" name="background_color" value="{{ offer.background_color if offer else '#6C757D' }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="text_align">Alineación de Texto</label>
+                        <select class="form-control" id="text_align" name="text_align">
+                            <option value="left" {% if offer and offer.text_align == 'left' %}selected{% endif %}>Izquierda</option>
+                            <option value="center" {% if not offer or offer.text_align == 'center' %}selected{% endif %}>Centro</option>
+                            <option value="right" {% if offer and offer.text_align == 'right' %}selected{% endif %}>Derecha</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="order">Orden</label>
+                        <input type="number" class="form-control" id="order" name="order" value="{{ offer.order if offer else 0 }}">
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="is_active" name="is_active" {% if not offer or offer.is_active %}checked{% endif %}>
+                        <label class="form-check-label" for="is_active">Activo</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                    <a href="{{ url_for('admin_offers') }}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,269 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Dashboard</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <!-- Tarjetas de Estadísticas -->
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="card bg-info">
+                    <div class="card-body">
+                        <h3>{{ total_products }}</h3>
+                        <p>Productos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="card bg-success">
+                    <div class="card-body">
+                        <h3>{{ total_orders }}</h3>
+                        <p>Pedidos Totales</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="card bg-warning">
+                    <div class="card-body">
+                        <h3>{{ total_pending }}</h3>
+                        <p>Pedidos Pendientes</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="card bg-primary">
+                    <div class="card-body">
+                        <h3>{{ total_customers }}</h3>
+                        <p>Clientes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="card bg-gradient-success">
+                    <div class="card-body">
+                        <h3>${{ '%.2f'|format(total_sales|float) }}</h3>
+                        <p>Ventas Totales</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="row mt-4">
+            <!-- Ventas Mensuales -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Ventas por Mes (Últimos 6 meses)</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="monthlySalesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pedidos por Estado -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Pedidos por Estado</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="orderStatusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Productos Más Vendidos -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Productos Más Vendidos</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cantidad Vendida</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in top_products %}
+                                <tr>
+                                    <td>{{ product[0] }}</td>
+                                    <td><span class="badge badge-success">{{ product[1] }}</span></td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="2" class="text-center">No hay datos</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Productos con Bajo Stock -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Productos con Bajo Stock</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Stock</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in low_stock_products %}
+                                <tr>
+                                    <td>{{ product.name }}</td>
+                                    <td><span class="badge badge-danger">{{ product.stock }}</span></td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="2" class="text-center text-success">Todos los productos tienen stock suficiente</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pedidos Recientes -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Pedidos Recientes</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Cliente</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in recent_orders %}
+                                <tr>
+                                    <td>{{ order.id }}</td>
+                                    <td>{{ order.customer_name }}</td>
+                                    <td>${{ '%.2f'|format(order.total_amount_ars|float) }}</td>
+                                    <td>
+                                        {% if order.status == 'pendiente' %}
+                                            <span class="badge badge-warning">Pendiente</span>
+                                        {% elif order.status == 'pagado' %}
+                                            <span class="badge badge-success">Pagado</span>
+                                        {% else %}
+                                            <span class="badge badge-secondary">{{ order.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ order.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center">No hay pedidos</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+// Ventas Mensuales
+const monthlySalesCtx = document.getElementById('monthlySalesChart').getContext('2d');
+const monthlySalesChart = new Chart(monthlySalesCtx, {
+    type: 'line',
+    data: {
+        labels: [{% for sale in monthly_sales %}'{{ sale[0] }}'{% if not loop.last %},{% endif %}{% endfor %}],
+        datasets: [{
+            label: 'Ventas ($)',
+            data: [{% for sale in monthly_sales %}{{ sale[1] }}{% if not loop.last %},{% endif %}{% endfor %}],
+            borderColor: 'rgb(75, 192, 192)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            tension: 0.1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: true
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+// Pedidos por Estado
+const orderStatusCtx = document.getElementById('orderStatusChart').getContext('2d');
+const orderStatusChart = new Chart(orderStatusCtx, {
+    type: 'doughnut',
+    data: {
+        labels: [{% for status in orders_by_status %}'{{ status[0] }}'{% if not loop.last %},{% endif %}{% endfor %}],
+        datasets: [{
+            data: [{% for status in orders_by_status %}{{ status[1] }}{% if not loop.last %},{% endif %}{% endfor %}],
+            backgroundColor: [
+                'rgba(255, 206, 86, 0.8)',
+                'rgba(75, 192, 192, 0.8)',
+                'rgba(255, 99, 132, 0.8)',
+                'rgba(54, 162, 235, 0.8)'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "admin_base.html" %}
+
+{% if category %}
+  {% set page_title = 'Editar categoría' %}
+{% else %}
+  {% set page_title = 'Nueva categoría' %}
+{% endif %}
+
+{% block title %}Admin - {{ page_title }}{% endblock %}
+
+{% block content %}
+<h3 class="mb-3">{{ page_title }}</h3>
+
+<form method="post">
+  <div class="form-group">
+    <label for="name">Nombre</label>
+    <input type="text" class="form-control" id="name" name="name" required value="{{ category.name if category else '' }}">
+  </div>
+
+  <div class="form-group">
+    <label for="description">Descripción</label>
+    <textarea class="form-control" id="description" name="description" rows="3">{{ category.description if category else '' }}</textarea>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Guardar</button>
+  <a href="{{ url_for('admin_categories') }}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}
+
+

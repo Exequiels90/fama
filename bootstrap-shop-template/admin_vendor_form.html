@@ -1,0 +1,39 @@
+{% extends "admin_base.html" %}
+{% block title %}{{ 'Editar' if vendor else 'Nuevo' }} Logo de Marca{% endblock %}
+{% block content %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6"><h1 class="m-0">{{ 'Editar' if vendor else 'Nuevo' }} Logo de Marca</h1></div>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    <div class="form-group">
+                        <label for="name">Nombre de la Marca *</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ vendor.name if vendor else '' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="image_url">URL del Logo *</label>
+                        <input type="text" class="form-control" id="image_url" name="image_url" value="{{ vendor.image_url if vendor else '' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="order">Orden</label>
+                        <input type="number" class="form-control" id="order" name="order" value="{{ vendor.order if vendor else 0 }}">
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="is_active" name="is_active" {% if not vendor or vendor.is_active %}checked{% endif %}>
+                        <label class="form-check-label" for="is_active">Activo</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                    <a href="{{ url_for('admin_vendors') }}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

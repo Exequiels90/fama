@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Checkout - {{ SITE_NAME }}</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link href="img/favicon.ico" rel="icon">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <style>
+        .is-invalid {
+            border-color: #dc3545 !important;
+        }
+        .invalid-feedback {
+            display: block;
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Topbar Start -->
+    <div class="container-fluid">
+        <div class="row bg-secondary py-2 px-xl-5">
+            {% if topbar_links %}
+            <div class="col-lg-6 d-none d-lg-block">
+                <div class="d-inline-flex align-items-center">
+                    {% for link in topbar_links %}
+                        {% if not loop.first %}<span class="text-muted px-2">|</span>{% endif %}
+                        <a class="text-dark" href="{{ link.url }}">{{ link.text }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-lg-6 text-center text-lg-right">
+            {% else %}
+            <div class="col-12 text-center">
+            {% endif %}
+                <div class="d-inline-flex align-items-center">
+                    {% if social_links %}
+                        {% for link in social_links %}
+                            <a class="text-dark px-2" href="{{ link.url }}" target="_blank" title="{{ link.name }}">
+                                <i class="{{ link.icon }}"></i>
+                            </a>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row align-items-center py-3 px-xl-5">
+            <div class="col-lg-3 d-none d-lg-block">
+                <a href="{{ url_for('index') }}" class="text-decoration-none">
+                    <h1 class="m-0 display-5 font-weight-semi-bold">
+                        <span class="text-primary font-weight-bold border px-3 mr-1">{{ SITE_SHORT_NAME }}</span>{{ SITE_NAME }}
+                    </h1>
+                </a>
+            </div>
+            <div class="col-lg-6 col-6 text-left">
+                <form action="">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Buscar productos">
+                        <div class="input-group-append">
+                            <span class="input-group-text bg-transparent text-primary">
+                                <i class="fa fa-search"></i>
+                            </span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-3 col-6 text-right">
+                <a href="{{ url_for('cart_view') }}" class="btn border">
+                    <i class="fas fa-shopping-cart text-primary"></i>
+                    <span class="badge" id="cart-count">{{ items|length if items else 0 }}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
+
+    <!-- Navbar Start -->
+    <div class="container-fluid mb-5">
+        <div class="row border-top px-xl-5">
+            <div class="col-lg-3 d-none d-lg-block">
+                <a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px;">
+                    <h6 class="m-0">Categorías</h6>
+                    <i class="fa fa-angle-down text-dark"></i>
+                </a>
+                <nav class="collapse navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0" id="navbar-vertical">
+                    <div class="navbar-nav w-100 overflow-hidden" style="max-height: 410px">
+                        {% if categories %}
+                            {% for category in categories %}
+                                <a href="{{ url_for('shop', category=category.id) }}" class="nav-item nav-link">{{ category.name }}</a>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </nav>
+            </div>
+            <div class="col-lg-9">
+                <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
+                    <a href="{{ url_for('index') }}" class="text-decoration-none d-block d-lg-none">
+                        <h1 class="m-0 display-5 font-weight-semi-bold">
+                            <span class="text-primary font-weight-bold border px-3 mr-1">{{ SITE_SHORT_NAME }}</span>{{ SITE_NAME }}
+                        </h1>
+                    </a>
+                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                        <div class="navbar-nav mr-auto py-0">
+                            <a href="{{ url_for('index') }}" class="nav-item nav-link">Inicio</a>
+                            <a href="{{ url_for('shop') }}" class="nav-item nav-link">Productos</a>
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">Cuenta</a>
+                                <div class="dropdown-menu rounded-0 m-0">
+                                    <a href="{{ url_for('cart_view') }}" class="dropdown-item">Carrito</a>
+                                    <a href="{{ url_for('checkout') }}" class="dropdown-item">Checkout</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Navbar End -->
+
+    <!-- Page Header Start -->
+    <div class="container-fluid bg-secondary mb-5">
+        <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 150px">
+            <h1 class="font-weight-semi-bold text-uppercase mb-3">Finalizar Compra</h1>
+            <div class="d-inline-flex">
+                <p class="m-0"><a href="{{ url_for('index') }}">Inicio</a></p>
+                <p class="m-0 px-2">-</p>
+                <p class="m-0">Checkout</p>
+            </div>
+        </div>
+    </div>
+    <!-- Page Header End -->
+
+    <!-- Checkout Start -->
+    <div class="container-fluid pt-5">
+        <div class="row px-xl-5">
+            <div class="col-lg-8">
+                <div class="mb-4">
+                    <h4 class="font-weight-semi-bold mb-4">Datos de Facturación</h4>
+                    <form method="post" id="checkoutForm" novalidate>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label>Nombre Completo *</label>
+                                <input class="form-control" type="text" name="name" id="name" placeholder="Juan Pérez" required>
+                                <div class="invalid-feedback">Por favor ingrese su nombre completo.</div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Email *</label>
+                                <input class="form-control" type="email" name="email" id="email" placeholder="ejemplo@email.com" required>
+                                <div class="invalid-feedback">Por favor ingrese un email válido.</div>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Teléfono *</label>
+                                <input class="form-control" type="tel" name="phone" id="phone" placeholder="+54 11 1234-5678" required>
+                                <div class="invalid-feedback">Por favor ingrese su teléfono.</div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <label>Dirección *</label>
+                                <textarea class="form-control" name="address" id="address" rows="3" placeholder="Calle, Número, Piso, Depto, Ciudad, Provincia, CP" required></textarea>
+                                <div class="invalid-feedback">Por favor ingrese su dirección completa.</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card border-secondary mb-5">
+                            <div class="card-header bg-secondary border-0">
+                                <h4 class="font-weight-semi-bold m-0">Resumen del Pedido</h4>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="font-weight-medium mb-3">Productos</h5>
+                                {% for item in items %}
+                                <div class="d-flex justify-content-between">
+                                    <p>{{ item.product.name }} × {{ item.quantity }}</p>
+                                    <p>${{ '%.2f'|format(item.line_total|float) }}</p>
+                                </div>
+                                {% endfor %}
+                                <hr class="mt-0">
+                                <div class="d-flex justify-content-between mb-3 pt-1">
+                                    <h6 class="font-weight-medium">Subtotal</h6>
+                                    <h6 class="font-weight-medium">${{ '%.2f'|format(total|float) }}</h6>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="font-weight-medium">Envío</h6>
+                                    <h6 class="font-weight-medium">Gratis</h6>
+                                </div>
+                            </div>
+                            <div class="card-footer border-secondary bg-transparent">
+                                <div class="d-flex justify-content-between mt-2">
+                                    <h5 class="font-weight-bold">Total</h5>
+                                    <h5 class="font-weight-bold">${{ '%.2f'|format(total|float) }}</h5>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card border-secondary mb-5">
+                            <div class="card-header bg-secondary border-0">
+                                <h4 class="font-weight-semi-bold m-0">Método de Pago</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" class="custom-control-input" name="payment" id="mercadopago" checked>
+                                        <label class="custom-control-label" for="mercadopago">Mercado Pago</label>
+                                    </div>
+                                </div>
+                                <p class="text-muted">Serás redirigido a Mercado Pago para completar el pago de forma segura.</p>
+                            </div>
+                            <div class="card-footer border-secondary bg-transparent">
+                                <button type="submit" class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3">
+                                    Realizar Pedido
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-secondary mb-5">
+                    <div class="card-header bg-secondary border-0">
+                        <h4 class="font-weight-semi-bold m-0">Tu Carrito</h4>
+                    </div>
+                    <div class="card-body">
+                        {% for item in items %}
+                        <div class="d-flex justify-content-between mb-3">
+                            <div class="d-flex">
+                                <img src="{{ item.product.image_url or 'img/product-1.jpg' }}" style="width: 50px; height: 50px; object-fit: cover;" class="mr-2">
+                                <div>
+                                    <small>{{ item.product.name }}</small><br>
+                                    <small class="text-muted">Cantidad: {{ item.quantity }}</small>
+                                </div>
+                            </div>
+                            <small>${{ '%.2f'|format(item.line_total|float) }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Checkout End -->
+
+    <!-- Footer Start -->
+    <div class="container-fluid bg-secondary text-dark mt-5 pt-5">
+        <div class="row px-xl-5 pt-5">
+            {% if footer_about %}
+            <div class="col-lg-4 col-md-12 mb-5 pr-3 pr-xl-5">
+                <a href="{{ url_for('index') }}" class="text-decoration-none">
+                    <h1 class="mb-4 display-5 font-weight-semi-bold">
+                        <span class="text-primary font-weight-bold border border-white px-3 mr-1">{{ SITE_SHORT_NAME }}</span>{{ SITE_NAME }}
+                    </h1>
+                </a>
+                {% if footer_about.content %}
+                    {{ footer_about.content|safe }}
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <div class="col-lg-8 col-md-12">
+                <div class="row">
+                    {% if footer_links_sections %}
+                        {% for section in footer_links_sections %}
+                        <div class="col-md-4 mb-5">
+                            <h5 class="font-weight-bold text-dark mb-4">{{ section.title }}</h5>
+                            <div class="d-flex flex-column justify-content-start">
+                                {% for link in section.links %}
+                                    {% if link.is_active %}
+                                    <a class="text-dark mb-2" href="{{ link.url }}">
+                                        {% if link.icon %}<i class="{{ link.icon }} mr-2"></i>{% endif %}{{ link.text }}
+                                    </a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    {% if footer_contact %}
+                    <div class="col-md-4 mb-5">
+                        <h5 class="font-weight-bold text-dark mb-4">{{ footer_contact.title or 'Contacto' }}</h5>
+                        {% if footer_contact.content %}
+                            {{ footer_contact.content|safe }}
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row border-top border-light mx-xl-5 py-4">
+            <div class="col-md-6 px-xl-0">
+                <p class="mb-md-0 text-center text-md-left text-dark">
+                    &copy; <a class="text-dark font-weight-semi-bold" href="{{ url_for('index') }}">{{ SITE_NAME }}</a>. Todos los derechos reservados.
+                </p>
+            </div>
+            <div class="col-md-6 px-xl-0 text-center text-md-right">
+                <img class="img-fluid" src="img/payments.png" alt="">
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Validación del Formulario -->
+    <script>
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var form = document.getElementById('checkoutForm');
+            form.addEventListener('submit', function(event) {
+                // Validación personalizada
+                var email = document.getElementById('email');
+                var phone = document.getElementById('phone');
+                var name = document.getElementById('name');
+                var address = document.getElementById('address');
+                
+                var isValid = true;
+                
+                // Validar nombre
+                if (name.value.trim().length < 3) {
+                    name.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    name.classList.remove('is-invalid');
+                }
+                
+                // Validar email
+                var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email.value)) {
+                    email.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    email.classList.remove('is-invalid');
+                }
+                
+                // Validar teléfono
+                var phoneRegex = /^[\d\s\+\-\(\)]+$/;
+                if (!phoneRegex.test(phone.value) || phone.value.trim().length < 8) {
+                    phone.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    phone.classList.remove('is-invalid');
+                }
+                
+                // Validar dirección
+                if (address.value.trim().length < 10) {
+                    address.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    address.classList.remove('is-invalid');
+                }
+                
+                if (!isValid) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+        }, false);
+    })();
+    </script>
+</body>
+</html>

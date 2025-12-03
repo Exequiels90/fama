@@ -1,0 +1,103 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Gestión de Contenido{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Gestión de Contenido</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-4 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-share-alt"></i> Redes Sociales</h5>
+                        <p class="card-text">Gestiona los enlaces a redes sociales en el topbar.</p>
+                        <a href="{{ url_for('admin_social_links') }}" class="btn btn-primary">Administrar</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-link"></i> Enlaces Topbar</h5>
+                        <p class="card-text">Gestiona los enlaces superiores (FAQs, Help, Support).</p>
+                        <a href="{{ url_for('admin_topbar_links') }}" class="btn btn-primary">Administrar</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-images"></i> Carousel / Slider</h5>
+                        <p class="card-text">Gestiona los banners principales del home.</p>
+                        <a href="{{ url_for('admin_carousel') }}" class="btn btn-primary">Administrar</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-star"></i> Características</h5>
+                        <p class="card-text">Gestiona las cajas de características (Quality, Shipping, etc.).</p>
+                        <a href="{{ url_for('admin_features') }}" class="btn btn-primary">Administrar</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-tag"></i> Banners de Ofertas</h5>
+                        <p class="card-text">Gestiona los banners de ofertas especiales.</p>
+                        <a href="{{ url_for('admin_offers') }}" class="btn btn-primary">Administrar</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-building"></i> Logos de Marcas</h5>
+                        <p class="card-text">Gestiona los logos de marcas/vendors.</p>
+                        <a href="{{ url_for('admin_vendors') }}" class="btn btn-primary">Administrar</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-shoe-prints"></i> Footer</h5>
+                        <p class="card-text">Gestiona las secciones del footer.</p>
+                        <a href="{{ url_for('admin_footer') }}" class="btn btn-primary">Administrar</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Novedades deshabilitadas por ahora
+            <div class="col-lg-4 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-newspaper"></i> Novedades</h5>
+                        <p class="card-text">Gestiona las novedades y noticias del sitio.</p>
+                        <a href="{{ url_for('admin_news') }}" class="btn btn-primary">Administrar</a>
+                    </div>
+                </div>
+            </div>
+            -->
+        </div>
+    </div>
+</section>
+{% endblock %}

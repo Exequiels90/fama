@@ -1,0 +1,47 @@
+{% extends "admin_base.html" %}
+{% block title %}Novedades{% endblock %}
+{% block content %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6"><h1 class="m-0">Novedades</h1></div>
+            <div class="col-sm-6">
+                <a href="{{ url_for('admin_news_new') }}" class="btn btn-primary float-right"><i class="fas fa-plus"></i> Agregar Novedad</a>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr><th>Orden</th><th>Título</th><th>Imagen</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for item in news %}
+                        <tr>
+                            <td>{{ item.order }}</td>
+                            <td>{{ item.title }}</td>
+                            <td><img src="{{ item.image_url }}" style="max-width:100px;max-height:50px;"></td>
+                            <td>{% if item.is_active %}<span class="badge badge-success">Activo</span>{% else %}<span class="badge badge-secondary">Inactivo</span>{% endif %}</td>
+                            <td>{{ item.created_at.strftime('%d/%m/%Y') if item.created_at else '-' }}</td>
+                            <td>
+                                <a href="{{ url_for('admin_news_edit', news_id=item.id) }}" class="btn btn-sm btn-info"><i class="fas fa-edit"></i></a>
+                                <form action="{{ url_for('admin_news_delete', news_id=item.id) }}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar?')"><i class="fas fa-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="6" class="text-center">No hay novedades configuradas.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <a href="{{ url_for('admin_content') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver</a>
+    </div>
+</section>
+{% endblock %}

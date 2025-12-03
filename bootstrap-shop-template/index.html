@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>EShopper - Bootstrap Shop Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Topbar Start -->
+    <div class="container-fluid">
+        <div class="row bg-secondary py-2 px-xl-5">
+            {% if topbar_links %}
+            <div class="col-lg-6 d-none d-lg-block">
+                <div class="d-inline-flex align-items-center">
+                    {% for link in topbar_links %}
+                        {% if not loop.first %}<span class="text-muted px-2">|</span>{% endif %}
+                        <a class="text-dark" href="{{ link.url }}">{{ link.text }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-lg-6 text-center text-lg-right">
+            {% else %}
+            <div class="col-12 text-center">
+            {% endif %}
+                <div class="d-inline-flex align-items-center">
+                    {% if social_links %}
+                        {% for link in social_links %}
+                            <a class="text-dark px-2" href="{{ link.url }}" target="_blank" title="{{ link.name }}">
+                                <i class="{{ link.icon }}"></i>
+                            </a>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row align-items-center py-3 px-xl-5">
+            <div class="col-lg-3 d-none d-lg-block">
+                <a href="{{ url_for('index') }}" class="text-decoration-none">
+                    <h1 class="m-0 display-5 font-weight-semi-bold">
+                        <span class="text-primary font-weight-bold border px-3 mr-1">{{ SITE_SHORT_NAME }}</span>{{ SITE_NAME }}
+                    </h1>
+                </a>
+            </div>
+            <div class="col-lg-6 col-6 text-left">
+                <form action="{{ url_for('search') }}" method="get">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="q" placeholder="Buscar productos">
+                        <div class="input-group-append">
+                            <button class="input-group-text bg-transparent text-primary" type="submit" style="border:none;">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-3 col-6 text-right">
+                <div class="btn-group">
+                    <button type="button" class="btn border dropdown-toggle" data-toggle="dropdown">
+                        <i class="fas fa-shopping-cart text-primary"></i>
+                        <span class="badge" id="cart-count">{{ session.get('cart', {})|length }}</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" style="min-width: 300px;">
+                        <div id="cart-dropdown-content">
+                            {% if session.get('cart', {}) %}
+                                <div class="px-3 py-2">
+                                    <h6 class="mb-3">Tu Carrito</h6>
+                                    <div id="cart-items">
+                                        <!-- Los items se cargarán aquí -->
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <strong>Total:</strong>
+                                        <strong id="cart-total">$0.00</strong>
+                                    </div>
+                                    <a href="{{ url_for('cart_view') }}" class="btn btn-primary btn-block btn-sm mb-2">Ver Carrito</a>
+                                    <a href="{{ url_for('checkout') }}" class="btn btn-success btn-block btn-sm">Finalizar Compra</a>
+                                </div>
+                            {% else %}
+                                <div class="px-3 py-2 text-center">
+                                    <p class="mb-0">Tu carrito está vacío</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
+
+
+    <!-- Navbar Start -->
+    <div class="container-fluid mb-5">
+        <div class="row border-top px-xl-5">
+            <div class="col-lg-3 d-none d-lg-block">
+                <a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px;">
+                    <h6 class="m-0">Categorías</h6>
+                    <i class="fa fa-angle-down text-dark"></i>
+                </a>
+                <nav class="collapse show navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0" id="navbar-vertical">
+                    <div class="navbar-nav w-100 overflow-hidden" style="max-height: 410px">
+                        {% if categories %}
+                            {% for category in categories %}
+                                <a href="{{ url_for('shop', category=category.id) }}" class="nav-item nav-link">{{ category.name }}</a>
+                            {% endfor %}
+                        {% else %}
+                            <span class="nav-item nav-link text-muted">Agregá categorías desde el panel</span>
+                        {% endif %}
+                    </div>
+                </nav>
+            </div>
+            <div class="col-lg-9">
+                <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
+                    <a href="" class="text-decoration-none d-block d-lg-none">
+                        <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
+                    </a>
+                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                        <div class="navbar-nav mr-auto py-0">
+                            <a href="{{ url_for('index') }}" class="nav-item nav-link active">Inicio</a>
+                            <a href="{{ url_for('shop') }}" class="nav-item nav-link">Productos</a>
+                        </div>
+                        <div class="navbar-nav ml-auto py-0">
+                            <a class="nav-item nav-link" href="{{ url_for('admin_login') }}">Admin</a>
+                        </div>
+                    </div>
+                </nav>
+                <div id="header-carousel" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        {% if carousel_slides %}
+                            {% for slide in carousel_slides %}
+                                <div class="carousel-item {% if loop.first %}active{% endif %}" style="height: 410px;">
+                                    <img class="img-fluid" src="{{ slide.image_url }}" alt="{{ slide.title }}">
+                                    <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                                        <div class="p-3" style="max-width: 700px;">
+                                            {% if slide.subtitle %}
+                                                <h4 class="text-light text-uppercase font-weight-medium mb-3">{{ slide.subtitle }}</h4>
+                                            {% endif %}
+                                            <h3 class="display-4 text-white font-weight-semi-bold mb-4">{{ slide.title }}</h3>
+                                            {% if slide.button_text and slide.button_url %}
+                                                <a href="{{ slide.button_url }}" class="btn btn-light py-2 px-3">{{ slide.button_text }}</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="carousel-item active" style="height: 410px;">
+                                <img class="img-fluid" src="img/carousel-1.jpg" alt="Image">
+                                <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                                    <div class="p-3" style="max-width: 700px;">
+                                        <h4 class="text-light text-uppercase font-weight-medium mb-3">10% Off Your First Order</h4>
+                                        <h3 class="display-4 text-white font-weight-semi-bold mb-4">Fashionable Dress</h3>
+                                        <a href="" class="btn btn-light py-2 px-3">Shop Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% if carousel_slides|length > 1 %}
+                    <a class="carousel-control-prev" href="#header-carousel" data-slide="prev">
+                        <div class="btn btn-dark" style="width: 45px; height: 45px;">
+                            <span class="carousel-control-prev-icon mb-n2"></span>
+                        </div>
+                    </a>
+                    <a class="carousel-control-next" href="#header-carousel" data-slide="next">
+                        <div class="btn btn-dark" style="width: 45px; height: 45px;">
+                            <span class="carousel-control-next-icon mb-n2"></span>
+                        </div>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Navbar End -->
+
+
+    <!-- Featured Start -->
+    {% if feature_boxes %}
+    <div class="container-fluid pt-5">
+        <div class="row px-xl-5 pb-3">
+            {% for feature in feature_boxes %}
+            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+                <div class="d-flex align-items-center border mb-4" style="padding: 30px;">
+                    <h1 class="{{ feature.icon }} text-primary m-0 mr-3"></h1>
+                    <h5 class="font-weight-semi-bold m-0">{{ feature.title }}</h5>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    <!-- Featured End -->
+
+
+    <!-- Offer Start -->
+    {% if offer_banners %}
+    <div class="container-fluid offer pt-5">
+        <div class="row px-xl-5">
+            {% for offer in offer_banners %}
+            <div class="col-md-6 pb-4">
+                <div class="position-relative text-center text-md-{{ offer.text_align }} text-white mb-2 py-5 px-5" style="background-color: {{ offer.background_color }};">
+                    <img src="{{ offer.image_url }}" alt="{{ offer.title }}">
+                    <div class="position-relative" style="z-index: 1;">
+                        {% if offer.subtitle %}
+                            <h5 class="text-uppercase text-primary mb-3">{{ offer.subtitle }}</h5>
+                        {% endif %}
+                        <h1 class="mb-4 font-weight-semi-bold">{{ offer.title }}</h1>
+                        {% if offer.button_text and offer.button_url %}
+                            <a href="{{ offer.button_url }}" class="btn btn-outline-primary py-md-2 px-md-3">{{ offer.button_text }}</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    <!-- Offer End -->
+
+
+    <!-- Products Start -->
+    <div class="container-fluid pt-5">
+        <div class="text-center mb-4">
+            <h2 class="section-title px-5"><span class="px-2">Nuestros Productos</span></h2>
+        </div>
+        <div class="row px-xl-5 pb-3">
+            {% set featured_products = products[:8] %}
+            {% if featured_products %}
+                {% for product in featured_products %}
+                    <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+                        <div class="card product-item border-0 mb-4">
+                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                                <img class="img-fluid w-100" src="{{ product.image_url or 'img/product-1.jpg' }}" alt="{{ product.name }}">
+                            </div>
+                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                                <h6 class="text-truncate mb-3">{{ product.name }}</h6>
+                                <div class="d-flex justify-content-center">
+                                    <h6>${{ '%.2f'|format(product.price_ars|float) }}</h6>
+                                </div>
+                            </div>
+                            <div class="card-footer d-flex justify-content-between bg-light border">
+                                <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Ver detalle</a>
+                                <form action="{{ url_for('cart_add', product_id=product.id) }}" method="post">
+                                    <button type="submit" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Agregar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info text-center">Cargá productos desde el panel para mostrarlos aquí.</div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <!-- Products End -->
+
+
+    <!-- Subscribe Start -->
+
+    <!-- Subscribe End -->
+
+
+    <!-- Products Start --><!--
+    <div class="container-fluid pt-5">
+        <div class="text-center mb-4">
+            <h2 class="section-title px-5"><span class="px-2">Novedades</span></h2>
+        </div>
+        <div class="row px-xl-5 pb-3">
+            {% set recent_products = products[8:16] if products|length > 8 else products %}
+            {% if recent_products %}
+                {% for product in recent_products %}
+                    <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+                        <div class="card product-item border-0 mb-4">
+                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                                <img class="img-fluid w-100" src="{{ product.image_url or 'img/product-1.jpg' }}" alt="{{ product.name }}">
+                            </div>
+                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                                <h6 class="text-truncate mb-3">{{ product.name }}</h6>
+                                <div class="d-flex justify-content-center">
+                                    <h6>${{ '%.2f'|format(product.price_ars|float) }}</h6>
+                                </div>
+                            </div>
+                            <div class="card-footer d-flex justify-content-between bg-light border">
+                                <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Ver detalle</a>
+                                <form action="{{ url_for('cart_add', product_id=product.id) }}" method="post">
+                                    <button type="submit" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Agregar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info text-center">Sumá productos para mostrarlos en esta sección.</div>
+                </div>
+            {% endif %}
+        </div>
+    </div> -->
+    <!-- Products End -->
+
+
+    <!-- Vendor Start -->
+    {% if vendor_logos %}
+    <div class="container-fluid py-5">
+        <div class="row px-xl-5">
+            <div class="col">
+                <div class="owl-carousel vendor-carousel">
+                    {% for vendor in vendor_logos %}
+                    <div class="vendor-item border p-4">
+                        <img src="{{ vendor.image_url }}" alt="{{ vendor.name }}">
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <!-- Vendor End -->
+
+
+    <!-- Footer Start -->
+    <div class="container-fluid bg-secondary text-dark mt-5 pt-5">
+        <div class="row px-xl-5 pt-5">
+            {% if footer_about %}
+            <div class="col-lg-4 col-md-12 mb-5 pr-3 pr-xl-5">
+                <a href="{{ url_for('index') }}" class="text-decoration-none">
+                    <h1 class="mb-4 display-5 font-weight-semi-bold">
+                        <span class="text-primary font-weight-bold border border-white px-3 mr-1">{{ SITE_SHORT_NAME }}</span>{{ SITE_NAME }}
+                    </h1>
+                </a>
+                {% if footer_about.content %}
+                    {{ footer_about.content|safe }}
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <div class="col-lg-8 col-md-12">
+                <div class="row">
+                    {% if footer_links_sections %}
+                        {% for section in footer_links_sections %}
+                        <div class="col-md-4 mb-5">
+                            <h5 class="font-weight-bold text-dark mb-4">{{ section.title }}</h5>
+                            <div class="d-flex flex-column justify-content-start">
+                                {% for link in section.links %}
+                                    {% if link.is_active %}
+                                    <a class="text-dark mb-2" href="{{ link.url }}">
+                                        {% if link.icon %}<i class="{{ link.icon }} mr-2"></i>{% endif %}{{ link.text }}
+                                    </a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    {% if footer_contact %}
+                    <div class="col-md-4 mb-5">
+                        <h5 class="font-weight-bold text-dark mb-4">{{ footer_contact.title or 'Contacto' }}</h5>
+                        {% if footer_contact.content %}
+                            {{ footer_contact.content|safe }}
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row border-top border-light mx-xl-5 py-4">
+            <div class="col-md-6 px-xl-0">
+                <p class="mb-md-0 text-center text-md-left text-dark">
+                    &copy; <a class="text-dark font-weight-semi-bold" href="{{ url_for('index') }}">{{ SITE_NAME }}</a>. Todos los derechos reservados.
+                </p>
+            </div>
+            <div class="col-md-6 px-xl-0 text-center text-md-right">
+                <img class="img-fluid" src="img/payments.png" alt="">
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Contact Javascript File -->
+    <script src="mail/jqBootstrapValidation.min.js"></script>
+    <script src="mail/contact.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+    
+    <!-- Carrito Javascript -->
+    <script>
+    $(document).ready(function() {
+        // Interceptar el envío de formularios de agregar al carrito
+        $('form[action*="cart/add"]').on('submit', function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var url = form.attr('action');
+            
+            $.ajax({
+                type: 'POST',
+                url: url,
+                success: function(response) {
+                    // Actualizar contador
+                    var currentCount = parseInt($('#cart-count').text()) || 0;
+                    $('#cart-count').text(currentCount + 1);
+                    
+                    // Mostrar mensaje
+                    alert('✓ Producto agregado al carrito');
+                    
+                    // Opcional: recargar para actualizar el dropdown
+                    location.reload();
+                },
+                error: function() {
+                    alert('Error al agregar el producto');
+                }
+            });
+        });
+    });
+    </script>
+</body>
+
+</html>

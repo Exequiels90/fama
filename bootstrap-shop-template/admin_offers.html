@@ -1,0 +1,47 @@
+{% extends "admin_base.html" %}
+{% block title %}Banners de Ofertas{% endblock %}
+{% block content %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6"><h1 class="m-0">Banners de Ofertas</h1></div>
+            <div class="col-sm-6">
+                <a href="{{ url_for('admin_offer_new') }}" class="btn btn-primary float-right"><i class="fas fa-plus"></i> Agregar Banner</a>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr><th>Orden</th><th>Título</th><th>Subtítulo</th><th>Imagen</th><th>Estado</th><th>Acciones</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for offer in offers %}
+                        <tr>
+                            <td>{{ offer.order }}</td>
+                            <td>{{ offer.title }}</td>
+                            <td>{{ offer.subtitle }}</td>
+                            <td><img src="{{ offer.image_url }}" style="max-width:100px;max-height:50px;"></td>
+                            <td>{% if offer.is_active %}<span class="badge badge-success">Activo</span>{% else %}<span class="badge badge-secondary">Inactivo</span>{% endif %}</td>
+                            <td>
+                                <a href="{{ url_for('admin_offer_edit', offer_id=offer.id) }}" class="btn btn-sm btn-info"><i class="fas fa-edit"></i></a>
+                                <form action="{{ url_for('admin_offer_delete', offer_id=offer.id) }}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar?')"><i class="fas fa-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="6" class="text-center">No hay banners de ofertas configurados.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <a href="{{ url_for('admin_content') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver</a>
+    </div>
+</section>
+{% endblock %}
